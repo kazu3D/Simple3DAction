@@ -3,6 +3,7 @@ using UnityEngine.UI;
 
 public class EnemyHPController : MonoBehaviour
 {
+    [SerializeField] AudioSource destroySE;
     public int maxHP = 3;
     private int currentHP;
 
@@ -36,6 +37,7 @@ public class EnemyHPController : MonoBehaviour
 
     void Die()
     {
-        Destroy(gameObject);
+        destroySE.Play();
+        Destroy(gameObject,0.4f);
     }
 }

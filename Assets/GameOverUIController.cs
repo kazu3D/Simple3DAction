@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class GameOverUIController : MonoBehaviour
 {
+    [SerializeField] AudioSource gameOverSE;
     public static GameOverUIController instance;
 
     public GameObject gameOverPanel;
@@ -22,5 +23,6 @@ public class GameOverUIController : MonoBehaviour
     {
         gameOverPanel.SetActive(true);
         Time.timeScale = 0f; // ÉQÅ[ÉÄí‚é~
+        gameOverSE.Play();
     }
 }

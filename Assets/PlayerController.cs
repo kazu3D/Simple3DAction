@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    [SerializeField] AudioSource jumpSE;
+    [SerializeField] AudioSource damageSE;
     public float moveSpeed = 5f;
     public float jumpPower = 5f;
     public float gravity = -9.8f;
@@ -88,6 +90,7 @@ public class PlayerController : MonoBehaviour
         {
             velocity.y = Mathf.Sqrt(jumpPower * -2f * gravity);
             groundTimer = 0f;
+            jumpSE.Play();
         }
 
         velocity.y += gravity * Time.deltaTime;
@@ -101,6 +104,7 @@ public class PlayerController : MonoBehaviour
     }
     void Attack()
     {
+        damageSE.Play();
         Collider[] hitEnemies = Physics.OverlapSphere(
             attackPoint.position,
             attackRange,
@@ -120,6 +124,7 @@ public class PlayerController : MonoBehaviour
     {
         if (isInvincible) return;
         {
+            damageSE.Play();
             currentHP -= damage;
             currentHP = Mathf.Clamp(currentHP, 0, maxHP);
 
