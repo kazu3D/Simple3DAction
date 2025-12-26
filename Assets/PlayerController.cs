@@ -26,6 +26,8 @@ public class PlayerController : MonoBehaviour
     public LayerMask enemyLayer;
     public float attackRange = 1.2f;
 
+    public float fallLimitY = -10f;
+
 
 
     private CharacterController controller;
@@ -44,8 +46,15 @@ public class PlayerController : MonoBehaviour
         hpBar.UpdateHP(currentHP, maxHP);
     }
 
+    bool isGameOver = false;
+
     void Update()
     {
+        // ‡@ GameOver’†‚Í‰½‚à‚µ‚È‚¢
+        if (isGameOver)
+            return;
+
+        // ‡A “ü—Íæ“¾
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");
 
@@ -53,25 +62,29 @@ public class PlayerController : MonoBehaviour
         Vector3 camRight = cameraTransform.right;
 
         camForward.y = 0;
-        camRight.y = 0;     //Y•ûŒü‚Ì‰e‹¿‚ğÁ‚·
+        camRight.y = 0;
 
         camForward.Normalize();
         camRight.Normalize();
 
         Vector3 move = camRight * h + camForward * v;
 
-        if(move.magnitude > 0.1f)
+        // ‡B ‰ñ“]
+        if (move.magnitude > 0.1f)
         {
             Quaternion targetRotation = Quaternion.LookRotation(move);
             transform.rotation = Quaternion.Slerp(
                 transform.rotation,
                 targetRotation,
-                rotateSpeed*Time.deltaTime
+                rotateSpeed * Time.deltaTime
             );
         }
+
+        // ‡C ‰¡ˆÚ“®
         controller.Move(move * moveSpeed * Time.deltaTime);
 
-        if(controller.isGrounded)
+        // ‡D Ú’n—P—\
+        if (controller.isGrounded)
         {
             groundTimer = groundGraceTime;
         }
@@ -81,11 +94,13 @@ public class PlayerController : MonoBehaviour
             groundTimer = Mathf.Max(groundTimer, 0f);
         }
 
+        // ‡E Ú’n‚Ì—‰ºƒŠƒZƒbƒg
         if (controller.isGrounded && velocity.y < 0)
         {
             velocity.y = -5f;
         }
 
+        // ‡F ƒWƒƒƒ“ƒv
         if (Input.GetButtonDown("Jump") && groundTimer > 0f)
         {
             velocity.y = Mathf.Sqrt(jumpPower * -2f * gravity);
@@ -93,15 +108,28 @@ public class PlayerController : MonoBehaviour
             jumpSE.Play();
         }
 
+        // ‡G d—Í
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
 
+        // ‡H UŒ‚
         if (Input.GetButtonDown("Fire1"))
         {
             Attack();
         }
 
+        // ‡I š—‰º”»’è‚Í•K‚¸ÅŒãš
+        if (transform.position.y < fallLimitY)
+        {
+            isGameOver = true;
+            velocity = Vector3.zero;
+            controller.enabled = false;
+            currentHP = 0;
+            HPBarController.instance.UpdateHP(currentHP,maxHP);
+            GameOverUIController.instance.ShowGameOver();
+        }
     }
+
     void Attack()
     {
         damageSE.Play();
