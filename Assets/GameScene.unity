@@ -857,7 +857,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62b2233187295d54a8f812de511d5659, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyController
-  moveSpeed: 3.8
+  moveSpeed: 0
   gravity: -9.8
   stopDistance: 1.5
 --- !u!143 &702295344
